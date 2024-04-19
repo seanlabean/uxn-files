@@ -1,0 +1,56 @@
+( hello.tal )
+( devices )
+|00 @System &vector $2 &pad $6 &r $2 &g $2 &b $2
+|10 @Console &vector $2 &read $1 &pad $5 &write $1 &error $1
+|20 @Screen &vector $2 &width $2 &height $2 &pad $2 &x $2 &y $2 &addr $2 &pixel $1 &sprite $1
+
+( macros )
+%EMIT { .Console/write DEO } ( pop and write to console )
+%NL { #0a EMIT } ( write new line )
+%PRINT-DIGIT { #30 ADD EMIT } ( build digit hex and print it )
+%DRAW-PIXEL { #41 .Screen/pixel DEO } ( -- )
+%INC-X { .Screen/x DEI2 INC2 .Screen/x DEO2 } ( increment screen x by 1 )
+%ADD-X { .Screen/x DEI2 ADD2 .Screen/x DEO2 } ( given a short, add it to Screen x )
+%DRAW-LINE { .Screen/y DEO2 .Screen/x DEO2 
+DRAW-PIXEL INC-X DRAW-PIXEL INC-X DRAW-PIXEL INC-X DRAW-PIXEL INC-X
+DRAW-PIXEL INC-X DRAW-PIXEL INC-X DRAW-PIXEL} ( xcoord ycoord -- )
+
+( main program )
+|0100
+      ( set system colors )
+      #2eef .System/r DEO2
+      #1eb8 .System/g DEO2
+      #3e2e .System/b DEO2
+      ( print numbers to console )
+      #06 PRINT-DIGIT #09 PRINT-DIGIT NL
+      ( draw pixel on screen )
+      #0200 .Screen/height DEO2
+      #0100 .Screen/width DEO2
+      #0008 #0008 DRAW-LINE
+      #0008 #0010 DRAW-LINE
+      #0050 #0007 DRAW-LINE
+
+      #0008 .Screen/x DEO2
+      #0050 .Screen/y DEO2
+      ( set sprite addr )
+      ;heart .Screen/addr DEO2
+
+      ( draw 1bpp sprite in the background )
+      ( using color1 for the outline )
+      #01 .Screen/sprite DEO
+
+
+BRK
+
+( labels )
+@heart [ 66ff ffff 7e3c 1800 ]
+(
+    0110 0110  66
+    1111 1111  ff
+    1111 1111  ff
+    1111 1111  ff
+    0111 1110  7e
+    0011 1100  3c
+    0001 1000  18
+    0000 0000  00
+)

@@ -1,0 +1,110 @@
+( hello-sprite.tal )
+
+( devices )
+|00 @System &vector $2 &pad $6 &r $2 &g $2 &b $2
+|20 @Screen &vector $2 &width $2 &height $2 &pad $2 &x $2 &y $2 &addr $2 &pixel $1 &sprite $1
+
+( macros )
+%INIT-X { .Screen/x DEO2 } ( -- )
+%INIT-Y { .Screen/y DEO2 } ( -- )
+%8ADD-X { .Screen/x DEI2 #0008 ADD2 .Screen/x DEO2 } ( -- )
+%8ADD-Y { .Screen/y DEI2 #0008 ADD2 .Screen/y DEO2 } ( -- )
+
+( main program )
+|0100
+     ( set system colors )
+     #2eef .System/r DEO2
+     #1eb8 .System/g DEO2
+     #3e2e .System/b DEO2
+
+     ( set initial x,y coordinates )
+     #0008 INIT-X #0008 INIT-Y
+
+     ;heart .Screen/addr DEO2
+
+      #00 .Screen/sprite DEO 8ADD-X
+      #01 .Screen/sprite DEO 8ADD-X
+      #02 .Screen/sprite DEO 8ADD-X
+      #03 .Screen/sprite DEO 8ADD-Y
+
+      #0008 INIT-X
+      #04 .Screen/sprite DEO 8ADD-X
+      #05 .Screen/sprite DEO 8ADD-X
+      #06 .Screen/sprite DEO 8ADD-X
+      #07 .Screen/sprite DEO 8ADD-Y
+
+      #0008 INIT-X
+      #08 .Screen/sprite DEO 8ADD-X
+      #09 .Screen/sprite DEO 8ADD-X
+      #0a .Screen/sprite DEO 8ADD-X
+      #0b .Screen/sprite DEO 8ADD-Y
+
+      #0008 INIT-X
+      #0c .Screen/sprite DEO 8ADD-X
+      #0d .Screen/sprite DEO 8ADD-X
+      #0e .Screen/sprite DEO 8ADD-X
+      #0f .Screen/sprite DEO 
+
+      #0030 INIT-X
+      #0008 INIT-Y
+
+      ;rock .Screen/addr DEO2
+
+      #00 .Screen/sprite DEO 8ADD-X
+      #01 .Screen/sprite DEO 8ADD-X
+      #02 .Screen/sprite DEO 8ADD-X
+      #03 .Screen/sprite DEO 8ADD-Y
+
+      #0030 INIT-X
+      #04 .Screen/sprite DEO 8ADD-X
+      #05 .Screen/sprite DEO 8ADD-X
+      #06 .Screen/sprite DEO 8ADD-X
+      #07 .Screen/sprite DEO 8ADD-Y
+
+      #0030 INIT-X
+      #08 .Screen/sprite DEO 8ADD-X
+      #09 .Screen/sprite DEO 8ADD-X
+      #0a .Screen/sprite DEO 8ADD-X
+      #0b .Screen/sprite DEO 8ADD-Y
+
+      #0030 INIT-X
+      #0c .Screen/sprite DEO 8ADD-X
+      #0d .Screen/sprite DEO 8ADD-X
+      #0e .Screen/sprite DEO 8ADD-X
+      #0f .Screen/sprite DEO 
+
+      #0055 INIT-X
+      #0008 INIT-Y
+
+      ;character .Screen/addr DEO2
+
+      #00 .Screen/sprite DEO 8ADD-X
+      #01 .Screen/sprite DEO 8ADD-X
+      #02 .Screen/sprite DEO 8ADD-X
+      #03 .Screen/sprite DEO 8ADD-Y
+
+      #0055 INIT-X
+      #04 .Screen/sprite DEO 8ADD-X
+      #05 .Screen/sprite DEO 8ADD-X
+      #06 .Screen/sprite DEO 8ADD-X
+      #07 .Screen/sprite DEO 8ADD-Y
+
+      #0055 INIT-X
+      #08 .Screen/sprite DEO 8ADD-X
+      #09 .Screen/sprite DEO 8ADD-X
+      #0a .Screen/sprite DEO 8ADD-X
+      #0b .Screen/sprite DEO 8ADD-Y
+
+      #0055 INIT-X
+      #0c .Screen/sprite DEO 8ADD-X
+      #0d .Screen/sprite DEO 8ADD-X
+      #0e .Screen/sprite DEO 8ADD-X
+      #0f .Screen/sprite DEO 
+
+
+      BRK
+
+( labels )
+@heart [ 66ff ffff 7e3c 1800 ]
+@rock [ 3c4e 9ffd f962 3c00 ]
+@character [ 3c7e 5a7f 1b3c 5a18 ]
