@@ -1,0 +1,51 @@
+( hello-2bpp-sprite.tal )
+
+( devices )
+|00 @System  [ &vector $2 &pad $6 &r $2 &g $2 &b $2 ]
+|10 @Console [ &vector $2 &read $1 &pad $5 &write $1 &error $1 ]
+|20 @Screen  [ &vector $2 &width $2 &height $2 &pad $2 &x $2 &y $2 &addr $2 &pixel $1 &sprite $1 ]
+|80 @Controller [ &vector $2 &button $1 &key $1 ]
+
+( macros )
+%INIT-X { #0008 .Screen/x DEO2 } ( -- )
+%INIT-Y { #0008 .Screen/y DEO2 } ( -- )
+%cADD-X { .Screen/x DEI2 #000c ADD2 .Screen/x DEO2 } ( -- )
+%cADD-Y { .Screen/y DEI2 #000c ADD2 .Screen/y DEO2 } ( -- )
+
+( main program )
+|0100
+      ( set system colors )
+      #2eef .System/r DEO2
+      #1eb8 .System/g DEO2
+      #3e2e .System/b DEO2
+
+      ( assign controller vector )
+      ;on-controller .Controller/vector DEO2
+      ( set x,y coordinates )
+      INIT-X INIT-Y 
+
+BRK
+
+( run this code whenever a key is pressed or released )
+@on-controller ( -> )
+    ( set sprite address )
+    ;new-square .Screen/addr DEO2
+    .Controller/key DEI ( get key pressed )
+    DUP #3a LTH SWP #2f GTH AND ( duplicate key, check if its lt 10 and gt 0 )
+    ,&place-sprite JCN ( jump to sprite draw if yes )
+
+    ( in other cases remove bool and break )
+    POP 
+    BRK
+
+    ( draw sprite in background )
+    ( using key number as spite color type )
+    &place-sprite
+        .Controller/key DEI .Screen/sprite DEO
+        cADD-X cADD-Y ( reposition next spite )
+        POP
+        BRK 
+BRK
+
+( sprite )
+@new-square  017f 7b73 6343 7fff     007c 7c7c 7c7c 0000
