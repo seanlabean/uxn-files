@@ -1,0 +1,78 @@
+( hello-draw.tal )
+( devices )
+|00 @System [ &vector $2 &pad $6 &r $2 &g $2 &b $2 ]
+|20 @Screen [ &vector $2 &width $2 &height $2 &pad $2 &x $2 &y $2 &addr $2 &pixel $1 &sprite ]
+|80 @Controller [ &vector $2 &button $1 &key $1 ]
+
+( main program )
+|100
+        ( set system colors )
+        #2eef .System/r DEO2
+        #1eb8 .System/g DEO2
+        #3e2e .System/b DEO2
+
+        ( assign controller vector )
+        ;on-controller .Controller/vector DEO2
+
+        ( set initial x,y coordinates )
+        #0008 .Screen/x DEO2
+        #0008 .Screen/y DEO2
+        ( set sprite address )
+        ;square .Screen/addr DEO2
+BRK
+
+@on-controller ( -> )
+        .Controller/button DEI DUP ( read and duplicate button byte )
+        #01 AND ( isolate bit 0, corresponding to Ctrl )
+        ,&fill JCN ( if bit is not 0, jump to fill, otherwise continue )
+
+        &outline
+            #03 .Screen/sprite DEO ( draw outline )
+            ,&check-arrows JMP ( unconditional jump to check arrows )
+
+        &fill
+            #07 .Screen/sprite DEO ( draw filled )
+        
+        &check-arrows
+            ( use button byte from stack )
+            DUP DUP DUP #10 AND ( isolate bit 4, corresponding to Up )
+            ,&up JCN ( jump if not 0 )
+
+            DUP DUP #20 AND ( isolate bit 5, Down )
+            ,&down JCN
+
+            DUP #40 AND  ( isolate bit 6, Left )
+            ,&left JCN
+
+            DUP #80 AND ( isolate bit 7, Right )
+            ,&right JCN
+            
+            POP BRK
+
+        &up
+            .Screen/y DEI2 #0008 SUB2 .Screen/y DEO2 ( decrement y; move up )
+            POP
+            DUP #40 AND  ( isolate bit 6, Left )
+            ,&left JCN
+            POP
+            DUP #80 AND
+            ,&right JCN
+            POP POP BRK
+        &down
+            .Screen/y DEI2 #0008 ADD2 .Screen/y DEO2 ( increment y; move down )
+            POP
+            DUP #40 AND  ( isolate bit 6, Left )
+            ,&left JCN
+            POP
+            DUP #80 AND
+            ,&right JCN
+            POP BRK
+        &left
+            .Screen/x DEI2 #0008 SUB2 .Screen/x DEO2 ( decrement x; move left )
+            POP BRK
+        &right
+            .Screen/x DEI2 #0008 ADD2 .Screen/x DEO2 ( increment x; move right )
+            POP BRK
+BRK
+( sprite )
+@square ff81 8181 8181 81ff
