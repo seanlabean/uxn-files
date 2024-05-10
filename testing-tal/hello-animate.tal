@@ -7,9 +7,9 @@
 ( init )
 |0100
         ( set system colors )
-        #2ce9 .System/r DEO2
-        #01c0 .System/g DEO2
-        #2ce5 .System/b DEO2
+        #0f00 .System/r DEO2
+        #0f00 .System/g DEO2
+        #0f00 .System/b DEO2
 
         ( set initial x,y coordinates )
         #0008 .Screen/x DEO2
@@ -24,12 +24,12 @@ BRK
         #01 .Screen/pixel DEO
 
         ( check if x is 69, increment y if yes )
-        .Screen/x DEI2 LIT #45 EQU ,&new-line JCN 
+        .Screen/x DEI2 #1f EQU ,&new-line JCN 
 
         ,&incr-x JMP ( otherwise keep incrementing x )
 
         &new-line
-            .Screen/y DEI2 INC2 INC2 .Screen/y DEO2
+            .Screen/y DEI2 INC2 INC2 INC2 .Screen/y DEO2
             #0007 .Screen/x DEO2 ( reset x coord )
         &incr-x
             .Screen/x DEI2 INC2 .Screen/x DEO2
