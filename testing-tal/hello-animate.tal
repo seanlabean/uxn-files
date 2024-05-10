@@ -23,6 +23,14 @@ BRK
         ( draw pixel in bg with color 1 )
         #01 .Screen/pixel DEO
 
-        ( increment Screen/x )
-        .Screen/x DEI2 INC2 .Screen/x DEO2
-BRK
+        ( check if x is 69, increment y if yes )
+        .Screen/x DEI2 LIT #45 EQU ,&new-line JCN 
+
+        ,&incr-x JMP ( otherwise keep incrementing x )
+
+        &new-line
+            .Screen/y DEI2 INC2 INC2 .Screen/y DEO2
+            #0007 .Screen/x DEO2 ( reset x coord )
+        &incr-x
+            .Screen/x DEI2 INC2 .Screen/x DEO2
+BRK 
