@@ -8,6 +8,8 @@
 |0000
 @pixel [ &x $2 &y $2 ]
 
+%ZP-INC2 { DUP LDZ2 INC2 INC2 ROT STZ2 } ( zp-address -- )
+
 ( init )
 |0100
         ( set system colors )
@@ -31,14 +33,14 @@ BRK
         ( draw pixel on screen with color 1 )
         #01 .Screen/pixel DEO
 
-        ( check if x is 69, increment y if yes )
-        .pixel/x LDZ2 #1f EQU ,&new-line JCN 
+        ( check if x > num; increment y if yes )
+        .pixel/x LDZ2 #3f GTH ,&new-line JCN 
 
         ,&incr-x JMP ( otherwise keep incrementing x )
 
         &new-line
-            .pixel/y LDZ2 INC2 INC2 INC2 .pixel/y STZ2
-            #0007 .pixel/x STZ2 ( reset x coord )
+            .pixel/y ZP-INC2
+            #0006 .pixel/x STZ2 ( reset x coord )
         &incr-x
-            .pixel/x LDZ2 INC2 .pixel/x STZ2
+            .pixel/x ZP-INC2
 BRK 
