@@ -4,6 +4,10 @@
 |00 @System [ &vector $2 &pad $6 &r $2 &g $2 &b $2 ]
 |20 @Screen [ &vector $2 &width $2 &height $2 &pad $2 &x $2 &y $2 &addr $2 &pixel $1 &sprite $1 ]
 
+( zero page )
+|0000
+@pixel [ &x $2 &y $2 ]
+
 ( init )
 |0100
         ( set system colors )
@@ -12,25 +16,29 @@
         #0f00 .System/b DEO2
 
         ( set initial x,y coordinates )
-        #0008 .Screen/x DEO2
-        #0008 .Screen/y DEO2
+        #0008 .pixel/x STZ2
+        #0008 .pixel/y STZ2
 
         ( set screen vector )
         ;on-frame .Screen/vector DEO2
 BRK
 
 @on-frame ( -> )
-        ( draw pixel in bg with color 1 )
+        ( load x,y coords from zero page and send to screen )
+        .pixel/x LDZ2 .Screen/x DEO2
+        .pixel/y LDZ2 .Screen/y DEO2
+
+        ( draw pixel on screen with color 1 )
         #01 .Screen/pixel DEO
 
         ( check if x is 69, increment y if yes )
-        .Screen/x DEI2 #1f EQU ,&new-line JCN 
+        .pixel/x LDZ2 #1f EQU ,&new-line JCN 
 
         ,&incr-x JMP ( otherwise keep incrementing x )
 
         &new-line
-            .Screen/y DEI2 INC2 INC2 INC2 .Screen/y DEO2
-            #0007 .Screen/x DEO2 ( reset x coord )
+            .pixel/y LDZ2 INC2 INC2 INC2 .pixel/y STZ2
+            #0007 .pixel/x STZ2 ( reset x coord )
         &incr-x
-            .Screen/x DEI2 INC2 .Screen/x DEO2
+            .pixel/x LDZ2 INC2 .pixel/x STZ2
 BRK 
