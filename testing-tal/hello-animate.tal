@@ -21,6 +21,9 @@
         #0008 .pixel/x STZ2
         #0008 .pixel/y STZ2
 
+        ( set sprite addr )
+        ;heart .Screen/addr DEO2
+
         ( set screen vector )
         ;on-frame .Screen/vector DEO2
 BRK
@@ -31,7 +34,7 @@ BRK
         .pixel/y LDZ2 .Screen/y DEO2
 
         ( draw pixel on screen with color 1 )
-        #01 .Screen/pixel DEO
+        #01 .Screen/sprite DEO
 
         ( check if x > num; increment y if yes )
         .pixel/x LDZ2 #3f GTH ,&new-line JCN 
@@ -44,3 +47,6 @@ BRK
         &incr-x
             .pixel/x ZP-INC2
 BRK 
+
+( sprites )
+@heart [ 66ff ffff 7e3c 1800 ]
