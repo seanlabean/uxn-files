@@ -4,6 +4,12 @@
 |00 @System  [ &vector $2 &pad $6  &r $2 &g $2 &b $2 ]
 |20 @Screen  [ &vector $2 &width $2 &height $2 &pad $2 &x $2 &y $2 &addr $2 &pixel $1 &sprite $1 ]
 
+( macros )
+%HALF { #01 SFT2 } ( short -- short/2 )
+%color-clear { #40 }
+%color-2 { #4a }
+%move-sprite { INC2 INC2 INC2 }
+
 ( zero page )
 |0000
 @sprite [ &pos-x $2 &pos-y $2 ]
@@ -16,7 +22,7 @@
     #2ce5 .System/b DEO2
 
     ( set screen/y to half of screen minus 4 )
-    .Screen/height DEI2 #01 SFT2 #0004 SUB2 .Screen/y DEO2
+    .Screen/height DEI2 HALF #0004 SUB2 .Screen/y DEO2
 
     ( set sprite address )
     ;heart .Screen/addr DEO2
@@ -27,17 +33,17 @@ BRK
 
 @on-frame ( -> )
     ( 1: clear sprite )
-    #40 .Screen/sprite DEO ( what does #40 do? )
+    color-clear .Screen/sprite DEO ( draw in fg w bg color0 )
 
     ( 2: change position )
-    .sprite/pos-x LDZ2 INC2 .sprite/pos-x STZ2
+    .sprite/pos-x LDZ2 move-sprite .sprite/pos-x STZ2
 
     ( 3: draw sprite )
     ( load x coord from zpage and send to screen )
     .sprite/pos-x LDZ2 .Screen/x DEO2
 
     ( draw sprite in fg w color 2 and transparency )
-    #4a .Screen/sprite DEO
+    color-2 .Screen/sprite DEO
 
 BRK
 
