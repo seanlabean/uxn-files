@@ -40,6 +40,14 @@ BRK
     ( 2: change position )
     &check-arrows
         .Controller/button DEI
+        #10 AND ( isolate bit 4, UP )
+        ,&up JCN
+        
+        .Controller/button DEI
+        #20 AND ( isolate bit 5, DOWN )
+        ,&down JCN
+
+        .Controller/button DEI
         #40 AND ( isolate bit 6, LEFT )
         ,&left JCN ( jump if not 0 )
 
@@ -47,29 +55,21 @@ BRK
         #80 AND ( isolate bit 7, RIGHT )
         ,&right JCN
 
-        .Controller/button DEI
-        #10 AND ( isolate bit 4, UP )
-        ,&up JCN
-        
-        .Controller/button DEI
-        #20 AND ( isolate bit 5, DOWN )
-        ,&down JCN
     ,&draw JMP
 
     &left
         .sprite/pos-x LDZ2 #0001 SUB2 .sprite/pos-x STZ2
         ,&draw JMP
     &right
-        #01 EMIT
         ( increment sprite right )
         .sprite/pos-x LDZ2 INC2 .sprite/pos-x STZ2
         ,&draw JMP
     &up
-        #01 EMIT
         .sprite/pos-y LDZ2 #0001 SUB2 .sprite/pos-y STZ2
         ,&draw JMP
     &down
         .sprite/pos-y LDZ2 INC2 .sprite/pos-y STZ2
+        ,&draw JMP
     ( 3: draw sprite )
     &draw
         ( load x coord from zpage and send to screen )
