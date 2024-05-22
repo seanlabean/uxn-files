@@ -60,8 +60,16 @@ BRK
         .sprite/pos-x LDZ2 #0001 SUB2 .sprite/pos-x STZ2
         ,&draw JMP
     &right
-        ( increment sprite right )
-        .sprite/pos-x LDZ2 INC2 .sprite/pos-x STZ2
+        .sprite/pos-x LDZ2 ( load x )
+        .Screen/width DEI2 #0008 SUB2 ( get screen width minus 8 )
+        EQU2 ( is x equal to screen width - 8 ? )
+        ,&continue JCN
+
+        &increment
+            ( increment sprite/pos-x )
+            .sprite/pos-x LDZ2 INC2 .sprite/pos-x STZ2
+
+        &continue
         ,&draw JMP
     &up
         .sprite/pos-y LDZ2 #0001 SUB2 .sprite/pos-y STZ2
