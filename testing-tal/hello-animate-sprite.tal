@@ -9,8 +9,8 @@
 ( macros )
 %EMIT { .Console/write DEO }
 %HALF { #01 SFT2 } ( short -- short/2 )
-%color-clear { #40 }
-%color-2 { #4a }
+%color-clear { #10 }
+%color-2-3 { #4e }
 %MOD { DUP2 DIV MUL SUB } ( a b -- a%b )
 %MOD2 { OVR2 OVR2 DIV2 MUL2 SUB2 } ( a b -- a%b )
 %check-width { .Screen/width DEI2 MOD2 
@@ -23,6 +23,7 @@
 ( zero page )
 |0000
 @sprite [ &pos-x $2 &pos-y $2 ]
+@framecount $1 
 
 ( init )
 |0100
@@ -32,7 +33,7 @@
     #2ce5 .System/b DEO2
 
     ( set sprite address )
-    ;heart .Screen/addr DEO2
+    ;animation .Screen/addr DEO2
     ( set initial sprite position )
     .Screen/width DEI2 HALF #0004 SUB2 .sprite/pos-x STZ2
     .Screen/height DEI2 HALF #0004 SUB2 .sprite/pos-y STZ2
@@ -41,9 +42,12 @@
 BRK
 
 @on-frame ( -> )
+    ( 0: increment framecount )
+    .framecount LDZ INC .framecount STZ
+
     ( 1: clear sprite )
     color-clear .Screen/sprite DEO ( draw in fg w bg color0 )
-
+ 
     ( 2: change position )
     &check-arrows
         .Controller/button DEI
@@ -78,14 +82,26 @@ BRK
         check-height
     ( 3: draw sprite )
     &draw
+        ( calculate animation frame w/ pointer arithmetic )
+        .framecount LDZ #07 ADD #08 MUL #00 SWP ;animation ADD2
+        .Screen/addr DEO2 
+
         ( load x coord from zpage and send to screen )
         .sprite/pos-x LDZ2 .Screen/x DEO2
         .sprite/pos-y LDZ2 .Screen/y DEO2
 
         ( draw sprite in fg w color 2 and transparency )
-        color-2 .Screen/sprite DEO
+        color-2-3 .Screen/sprite DEO
 
 BRK
 
 ( sprites )
-@heart [ 66ff ffff 7e3c 1800 ]
+@animation [
+  &frame0 00 00 00 00 00 00 01 03
+  &frame1 00 00 00 00 01 03 06 0c
+  &frame2 00 00 01 03 06 0c 18 30
+  &frame3 01 03 06 0c 18 30 60 c0
+  &frame4 03 06 0c 18 30 60 c0 80
+  &frame5 0c 18 30 60 c0 80 00 00
+  &frame6 30 60 c0 80 00 00 00 00
+  &frame7 c0 80 00 00 00 00 00 00 ]
