@@ -13,6 +13,8 @@
 %color-2-3 { #4e }
 %MOD { DUP2 DIV MUL SUB } ( a b -- a%b )
 %MOD2 { OVR2 OVR2 DIV2 MUL2 SUB2 } ( a b -- a%b )
+%MOD8 { #07 ADD } ( byte -- byte%8 )
+%TO-SHORT { #00 SWP } ( byte -- short )
 %check-width { .Screen/width DEI2 MOD2 
                .sprite/pos-x STZ2 
                ,&draw JMP }
@@ -83,7 +85,7 @@ BRK
     ( 3: draw sprite )
     &draw
         ( calculate animation frame w/ pointer arithmetic )
-        .framecount LDZ #07 ADD #08 MUL #00 SWP ;animation ADD2
+        .framecount LDZ MOD8 #08 MUL TO-SHORT ;animation ADD2
         .Screen/addr DEO2 
 
         ( load x coord from zpage and send to screen )
