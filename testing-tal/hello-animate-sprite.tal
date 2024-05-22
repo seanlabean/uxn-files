@@ -13,6 +13,12 @@
 %color-2 { #4a }
 %MOD { DUP2 DIV MUL SUB } ( a b -- a%b )
 %MOD2 { OVR2 OVR2 DIV2 MUL2 SUB2 } ( a b -- a%b )
+%check-width { .Screen/width DEI2 MOD2 
+               .sprite/pos-x STZ2 
+               ,&draw JMP }
+%check-height { .Screen/height DEI2 MOD2
+                .sprite/pos-y STZ2
+                ,&draw JMP }
 
 ( zero page )
 |0000
@@ -60,24 +66,16 @@ BRK
 
     &left
         .sprite/pos-x LDZ2 #0001 SUB2 
-        .Screen/width DEI2 MOD2
-        .sprite/pos-x STZ2
-        ,&draw JMP
+        check-width
     &right
         .sprite/pos-x LDZ2 INC2
-        .Screen/width DEI2 MOD2 
-        .sprite/pos-x STZ2
-        ,&draw JMP
+        check-width
     &up
         .sprite/pos-y LDZ2 #0001 SUB2 
-        .Screen/height DEI2 MOD2
-        .sprite/pos-y STZ2
-        ,&draw JMP
+        check-height
     &down
         .sprite/pos-y LDZ2 INC2 
-        .Screen/height DEI2 MOD2
-        .sprite/pos-y STZ2
-        ,&draw JMP
+        check-height
     ( 3: draw sprite )
     &draw
         ( load x coord from zpage and send to screen )
