@@ -11,6 +11,8 @@
 %HALF { #01 SFT2 } ( short -- short/2 )
 %color-clear { #40 }
 %color-2 { #4a }
+%MOD { DUP2 DIV MUL SUB } ( a b -- a%b )
+%MOD2 { OVR2 OVR2 DIV2 MUL2 SUB2 } ( a b -- a%b )
 
 ( zero page )
 |0000
@@ -57,25 +59,24 @@ BRK
     ,&draw JMP
 
     &left
-        .sprite/pos-x LDZ2 #0001 SUB2 .sprite/pos-x STZ2
+        .sprite/pos-x LDZ2 #0001 SUB2 
+        .Screen/width DEI2 MOD2
+        .sprite/pos-x STZ2
         ,&draw JMP
     &right
-        .sprite/pos-x LDZ2 ( load x )
-        .Screen/width DEI2 #0008 SUB2 ( get screen width minus 8 )
-        EQU2 ( is x equal to screen width - 8 ? )
-        ,&continue JCN
-
-        &increment
-            ( increment sprite/pos-x )
-            .sprite/pos-x LDZ2 INC2 .sprite/pos-x STZ2
-
-        &continue
+        .sprite/pos-x LDZ2 INC2
+        .Screen/width DEI2 MOD2 
+        .sprite/pos-x STZ2
         ,&draw JMP
     &up
-        .sprite/pos-y LDZ2 #0001 SUB2 .sprite/pos-y STZ2
+        .sprite/pos-y LDZ2 #0001 SUB2 
+        .Screen/height DEI2 MOD2
+        .sprite/pos-y STZ2
         ,&draw JMP
     &down
-        .sprite/pos-y LDZ2 INC2 .sprite/pos-y STZ2
+        .sprite/pos-y LDZ2 INC2 
+        .Screen/height DEI2 MOD2
+        .sprite/pos-y STZ2
         ,&draw JMP
     ( 3: draw sprite )
     &draw
