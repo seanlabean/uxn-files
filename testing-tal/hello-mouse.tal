@@ -37,12 +37,8 @@ BRK
     #40 .Screen/sprite DEO
 
     ( update pointer position )
-    .Mouse/x DEI2 .pointer/x STZ2
-    .Mouse/y DEI2 .pointer/y STZ2
-
-    ( send pointer position to screen )
-    .pointer/x LDZ2 .Screen/x DEO2
-    .pointer/y LDZ2 .Screen/y DEO2
+    .Mouse/x DEI2 DUP2 .pointer/x STZ2 .Screen/x DEO2
+    .Mouse/y DEI2 DUP2 .pointer/y STZ2 .Screen/y DEO2
 
     ( draw sprite with color 2 in foreground )
     #4a .Screen/sprite DEO 
