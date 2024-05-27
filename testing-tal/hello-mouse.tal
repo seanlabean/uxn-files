@@ -19,13 +19,14 @@
     ( set mouse vector )
     ;on-mouse .Mouse/vector DEO2
 
-    ( set sprite address )
-    ( ;square .Screen/addr DEO2 )
-    ;pointer_icn .Screen/addr DEO2
 
 BRK
 
 @on-mouse ( -> )
+    ( set sprite address )
+    ( ;square .Screen/addr DEO2 )
+    ;pointer_icn .Screen/addr DEO2
+
     ( send pointer position to screen )
     .pointer/x LDZ2 .Screen/x DEO2
     .pointer/y LDZ2 .Screen/y DEO2
@@ -44,16 +45,18 @@ BRK
     #4a .Screen/sprite DEO 
 
     ( jump if any button pressed )
-    ( .Mouse/state DEI ,&pressed JCN
+    .Mouse/state DEI ,&pressed JCN
 
     ( draw sprite using color 2 and 0 in bg )
-    #02 .Screen/sprite DEO2
+    ( #02 .Screen/sprite DEO2 )
     BRK
 
     &pressed
     ( draw sprite using color 1 and 0 in bg )
-    #01 .Screen/sprite DEO )
+    ;heart .Screen/addr DEO2
+    #01 .Screen/sprite DEO
 BRK
 
 @square [ ff81 8181 8181 81ff ]
+@heart [ 66ff ffff 7e3c 1800 ]
 @pointer_icn [ 80c0 e0f0 f8e0 1000 ]
