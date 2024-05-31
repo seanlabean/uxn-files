@@ -23,6 +23,11 @@
 BRK
 
 @on-mouse ( -> )
+    ;draw-pointer JSR2
+
+    ;draw-sprite JSR2
+BRK
+@draw-pointer
     ( set sprite address )
     ( ;square .Screen/addr DEO2 )
     ;pointer_icn .Screen/addr DEO2
@@ -40,7 +45,8 @@ BRK
     ( update pointer position )
     .Mouse/x DEI2 DUP2 .pointer/x STZ2 .Screen/x DEO2
     .Mouse/y DEI2 DUP2 .pointer/y STZ2 .Screen/y DEO2
-
+JMP2r
+@draw-sprite
     ( draw sprite with color 2 in foreground )
     #4a .Screen/sprite DEO 
 
@@ -55,6 +61,7 @@ BRK
     ( draw sprite using color 1 and 0 in bg )
     ;heart .Screen/addr DEO2
     #01 .Screen/sprite DEO
+JMP2r
 BRK
 
 @square [ ff81 8181 8181 81ff ]
