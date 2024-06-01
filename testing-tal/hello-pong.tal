@@ -1,2 +1,43 @@
 ( hello-pong.tal )
 ( the final project of the uxn tutorial! )
+
+( devices )
+|00 @System  [ &vector $2 &pad $6 &r $2 &g $2 &b $2 ]
+|20 @Screen  [ &vector $2 &width $2 &height $2 &auto $1 &pad $1 &x $2 &y $2 &addr $2 &pixel $1 &sprite $1 ]
+|80 @Controller [ &vector $2 &button $1 &key $1 ]
+
+%check-width { .Screen/width DEI2 
+               .sprite/pos-x LTH2 
+               ,&draw JCN}
+
+( zero page )
+|0000
+( @bg-sprite [ &pos-x $2 &pos-y $2 ] )
+@framecount $1 
+
+( main program )
+|0100
+@setup
+    ( set system colors )
+    #2ce9 .System/r DEO2
+    #01c0 .System/g DEO2
+    #2ce5 .System/b DEO2
+
+    ;tile-background .Screen/addr DEO2
+    ( draw bg )
+    ;draw-background JSR2
+BRK
+@draw-background
+    #0000 .Screen/x DEO2 ( set initial x )
+
+    &loop-x
+        #03 .Screen/sprite DEO ( draw 1bpp sprite with color 3 and 0 )
+        .Screen/x DEI2 #0008 ADD2 ( add 8 to x )
+        DUP2 ( duplicate new x )
+        .Screen/x DEO2 ( store new x )
+        .Screen/width DEI2 ( get the limit )
+        LTH2 ,&loop-x JCN ( jump if x is less than the limit )
+JMP2r
+BRK
+
+@tile-background 1122 4488 1122 4488
