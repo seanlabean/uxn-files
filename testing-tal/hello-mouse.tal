@@ -5,6 +5,9 @@
 |20 @Screen  [ &vector $2 &width $2 &height $2 &pad  $2 &x $2 &y $2 &addr $2 &pixel $1 &sprite $1 ]
 |90 @Mouse [ &vector $2 &x $2 &y $2 &state $1 &pad $3 &scrollx $2 &scrolly $2 ]
 
+( macros )
+%HALF2 { #01 SFT2 }
+
 ( zero page )
 |0000
 @pointer [ &x $2 &y $2 ]
@@ -19,12 +22,15 @@
     ( set mouse vector )
     ;on-mouse .Mouse/vector DEO2
 
-
 BRK
 
 @on-mouse ( -> )
     ;draw-pointer JSR2
-
+    
+    ( #0008 ( push initial x )
+    .Screen/height DEI2 HALF2 ( push y )
+    #ff ( push length of line )
+    ;draw-horiz-line JSR2 ( call subroutine ) )
     ;draw-sprite JSR2
 BRK
 @draw-pointer
@@ -46,6 +52,48 @@ BRK
     .Mouse/x DEI2 DUP2 .pointer/x STZ2 .Screen/x DEO2
     .Mouse/y DEI2 DUP2 .pointer/y STZ2 .Screen/y DEO2
 JMP2r
+
+@draw-horiz-line ( x^ y^ length -- )
+    ( beginning )
+    ( ws: x^ y^ length / rs: )
+    
+    ( store length in return stack )
+    STH ( ws: x^ y^ / rs: length )
+
+    ( set initial coords )
+    .Screen/y DEO2
+    .Screen/x DEO2 
+    ( ws: / rs: length )
+
+    ( retreive length from return stack )
+    STHr ( ws: length / rs: )
+
+    ( initalize count )
+    #00 ( ws: length 00 / rs: )
+
+    &loop
+        ( stash length and count )
+        STH2 ( ws: / rs: length count ) ( using STH2 preserves ordering )
+
+        ( draw pixel with color 2 )
+        #02 .Screen/pixel DEO
+
+        ( increment x )
+        .Screen/x DEI2 INC2 .Screen/x DEO2
+
+        ( retrieve length and count )
+        STH2r ( ws: length count / rs: )
+
+        ( increment count to get new count )
+        INC ( ws: length count+1 / rs: )
+
+        ( duplicate length and count and compare to continue looping or not )
+        DUP2 ( ws: length count length count / rs: )
+        NEQ ( ws: length count flag / rs: )
+        ,&loop JCN ( ws: length count / rs: )
+    POP2 ( ws: / rs: )
+JMP2r
+
 @draw-sprite
     ( draw sprite with color 2 in foreground )
     #4a .Screen/sprite DEO 
