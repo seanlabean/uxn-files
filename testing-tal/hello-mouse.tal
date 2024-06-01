@@ -87,9 +87,8 @@ JMP2r
         ( increment count to get new count )
         INC ( ws: length count+1 / rs: )
 
-        ( duplicate length and count and compare to continue looping or not )
-        DUP2 ( ws: length count length count / rs: )
-        NEQ ( ws: length count flag / rs: )
+        ( compare to continue looping or not )
+        NEQk ( ws: length count flag / rs: )
         ,&loop JCN ( ws: length count / rs: )
     POP2 ( ws: / rs: )
 JMP2r
