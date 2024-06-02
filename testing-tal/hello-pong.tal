@@ -6,9 +6,7 @@
 |20 @Screen  [ &vector $2 &width $2 &height $2 &auto $1 &pad $1 &x $2 &y $2 &addr $2 &pixel $1 &sprite $1 ]
 |80 @Controller [ &vector $2 &button $1 &key $1 ]
 
-%check-width { .Screen/width DEI2 
-               .sprite/pos-x LTH2 
-               ,&draw JCN}
+%WALL-MARGIN { #0010 }
 
 ( zero page )
 |0000
@@ -28,11 +26,18 @@
     ;draw-background JSR2
 BRK
 @draw-background
-    .Screen/width DEI2 #0000 ( limit and initial x )
-    &loop-x
-        DUP2 .Screen/x DEO2
-        #03 .Screen/sprite DEO
-        #0008 ADD2 GTH2k ,&loop-x JCN
+    .Screen/height DEI2 WALL-MARGIN SUB2 WALL-MARGIN
+    &loop-y
+        DUP2 .Screen/y DEO2 
+        ( draw row )
+        .Screen/width DEI2 #0000 ( limit and initial x )
+        &loop-x
+            DUP2 .Screen/x DEO2
+            #03 .Screen/sprite DEO
+            #0008 ADD2 GTH2k ,&loop-x JCN
+        POP2 POP2
+        ( inc y and loop back )
+        #0008 ADD2 GTH2k ,&loop-y JCN
     POP2 POP2
 JMP2r
 BRK
