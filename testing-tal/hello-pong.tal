@@ -28,15 +28,12 @@
     ;draw-background JSR2
 BRK
 @draw-background
-    #0000 .Screen/x DEO2 ( set initial x )
-
+    .Screen/width DEI2 #0000 ( limit and initial x )
     &loop-x
-        #03 .Screen/sprite DEO ( draw 1bpp sprite with color 3 and 0 )
-        .Screen/x DEI2 #0008 ADD2 ( add 8 to x )
-        DUP2 ( duplicate new x )
-        .Screen/x DEO2 ( store new x )
-        .Screen/width DEI2 ( get the limit )
-        LTH2 ,&loop-x JCN ( jump if x is less than the limit )
+        DUP2 .Screen/x DEO2
+        #03 .Screen/sprite DEO
+        #0008 ADD2 GTH2k ,&loop-x JCN
+    POP2 POP2
 JMP2r
 BRK
 
