@@ -24,6 +24,7 @@
     ;tile-background .Screen/addr DEO2
     ( draw bg )
     ;draw-background JSR2
+    #0008 #0008 #c5 ;draw-paddle JSR2
 BRK
 @draw-background
     .Screen/height DEI2 WALL-MARGIN SUB2 WALL-MARGIN
@@ -42,4 +43,32 @@ BRK
 JMP2r
 BRK
 
+@draw-paddle ( x^ y^ color -- )
+    ( save color )
+    STH
+
+    ( set initial y and x )
+    .Screen/y DEO2
+    .Screen/x DEO2
+
+    ( set first sprite address )
+    ;paddle-sprite .Screen/addr DEO2
+
+    ( auto byte: length: +1 sprite )
+    ( set auto addr and auto y )
+    #16 .Screen/auto DEO
+
+    ( get color from return stack )
+    STHr
+    
+    ( draw three rows: )
+    .Screen/sprite DEOk DEOk DEO
+
 @tile-background 1122 4488 1122 4488
+@paddle-sprite
+ &tile0 [ 3f 7f e7 c3 c3 c3 c3 c3  00 00 18 3c 3c 3c 3c 3c ]
+ &tile1 [ fc fe ff ff ff ff ff ff  00 00 00 00 00 00 06 06 ]
+ &tile2 [ c3 c3 c3 c3 e7 ff ff ff  3c 3c 3c 3c 18 00 00 00 ]
+ &tile3 [ ff ff ff ff ff ff ff ff  06 06 06 06 06 06 06 06 ]
+ &tile4 [ ff ff ff ff ff ff 7f 3f  00 00 00 00 00 00 00 00 ]
+ &tile5 [ ff ff ff ff ff ff fe fc  06 06 06 06 06 1e 3c 00 ]
