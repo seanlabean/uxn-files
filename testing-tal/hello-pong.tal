@@ -9,7 +9,9 @@
 %WALL-MARGIN   { #0010 }
 %PADDLE-WIDTH  { #0010 } ( 2 tiles )
 %PADDLE-HEIGHT { #0018 } ( 3 tiles )
+%PADDLE-SPEED  { #0001 }
 %PADDLE-COLOR  { #c5 }
+%CLEAR-COLOR   { #40 }
 %HALF2 { #01 SFT2 } ( short -- short/2 )
 
 ( zero page )
@@ -43,6 +45,13 @@
 BRK
 
 @on-frame
+    ( clear paddles )
+    .left/x LDZ2 .left/y LDZ2 CLEAR-COLOR ;draw-paddle JSR2
+    .right/x LDZ2 .right/y LDZ2 CLEAR-COLOR ;draw-paddle JSR2
+
+    ( update paddles )
+    ;update-paddles JSR2
+
     ( draw paddles )
     .left/x LDZ2 .left/y LDZ2 PADDLE-COLOR ;draw-paddle JSR2
     .right/x LDZ2 .right/y LDZ2 PADDLE-COLOR ;draw-paddle JSR2
@@ -86,6 +95,31 @@ BRK
     
     ( draw three rows: )
     .Screen/sprite DEOk DEOk DEO
+JMP2r
+BRK
+
+@update-paddles ( -- )
+    ( updates paddle x y coords in zpage )
+    ( left paddle controlled by up/down arrows )
+    &left
+        ( check if up/down arrows are pressed and JCN ) 
+        
+        &right JMP ( JMP to right paddle if none are pressed )
+
+        &left-up
+
+        &left-down
+
+    &right
+
+        &end JMP
+        &right-up
+
+        &right-down
+
+    &end
+    ( right paddle controlled by w/s keys )
+
 JMP2r
 BRK
 
