@@ -27,21 +27,29 @@
     #01c0 .System/g DEO2
     #2ce5 .System/b DEO2
 
+    ;on-frame .Screen/vector DEO2
+
+    ( draw bg )
+    ;draw-background JSR2
+
     ( initialize paddle sprite positions )
     ( x coords )
-    MARGIN .left/x STZ2 ( left )
-    .Screen/width DEI2 MARGIN SUB2 ( right ) 
+    WALL-MARGIN .left/x STZ2 ( left )
+    .Screen/width DEI2 WALL-MARGIN SUB2 ( right ) 
     PADDLE-WIDTH SUB2 .right/x STZ2
     ( y coords )
     .Screen/height DEI2 PADDLE-HEIGHT SUB2 HALF2 DUP2
     .left/y STZ2 .right/y STZ2
-
-    ;tile-background .Screen/addr DEO2
-    ( draw bg )
-    ;draw-background JSR2
-    #0008 #0008 #c5 ;draw-paddle JSR2
 BRK
+
+@on-frame
+    ( draw paddles )
+    .left/x LDZ2 .left/y LDZ2 PADDLE-COLOR ;draw-paddle JSR2
+    .right/x LDZ2 .right/y LDZ2 PADDLE-COLOR ;draw-paddle JSR2
+BRK
+
 @draw-background
+    ;tile-background .Screen/addr DEO2
     .Screen/height DEI2 WALL-MARGIN SUB2 WALL-MARGIN
     &loop-y
         DUP2 .Screen/y DEO2 
@@ -78,6 +86,8 @@ BRK
     
     ( draw three rows: )
     .Screen/sprite DEOk DEOk DEO
+JMP2r
+BRK
 
 @tile-background 1122 4488 1122 4488
 @paddle-sprite
